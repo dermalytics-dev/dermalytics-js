@@ -4,4 +4,4 @@ export { Dermalytics } from './client';
 export * from './types';
 export * from './errors';
 
-export const version = '0.1.0';
+export const version = '0.2.0';

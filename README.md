@@ -4,7 +4,7 @@ JavaScript/TypeScript SDK for the [Dermalytics API](https://dermalytics.dev) - S
 
 ## ⚠️ Status
 
-This SDK is currently a **placeholder**. Full implementation coming soon. All methods will throw errors until the SDK is fully implemented.
+This SDK is currently in **development** and **alpha testing**. The API is functional but may have breaking changes in future versions. Use with caution in production environments.
 
 ## Installation
 
@@ -72,7 +72,7 @@ Initialize the Dermalytics API client.
 - `config.baseUrl` (string, optional): Base URL for the API (defaults to `https://api.dermalytics.dev`)
 
 **Throws:**
-- `Error`: This SDK is currently a placeholder
+- `ValidationError`: If API key is missing or invalid
 
 ### `getIngredient(name: string): Promise<Ingredient>`
 
@@ -91,9 +91,11 @@ Get detailed information about a specific ingredient.
   - `synonyms` (array): Array of alternative names for the ingredient
 
 **Throws:**
-- `Error`: This SDK is currently a placeholder
+- `ValidationError`: If the ingredient name is invalid
 - `NotFoundError`: If the ingredient is not found
-- `APIError`: If the API returns an error
+- `AuthenticationError`: If authentication fails
+- `RateLimitError`: If rate limit is exceeded
+- `APIError`: For other API errors
 
 ### `analyze(ingredients: string[]): Promise<ProductAnalysis>`
 
@@ -109,13 +111,14 @@ Analyze a complete product formulation.
   - `warnings` (array): Array of warnings for specific conditions or interactions
 
 **Throws:**
-- `Error`: This SDK is currently a placeholder
-- `ValidationError`: If the request is invalid
-- `APIError`: If the API returns an error
+- `ValidationError`: If the ingredients array is invalid
+- `AuthenticationError`: If authentication fails
+- `RateLimitError`: If rate limit is exceeded
+- `APIError`: For other API errors
 
 ## Error Handling
 
-The SDK provides custom error classes:
+The SDK provides comprehensive error handling with specific error classes for different scenarios:
 
 ```typescript
 import {
@@ -134,11 +137,26 @@ try {
     console.log('Ingredient not found');
   } else if (error instanceof AuthenticationError) {
     console.log('Invalid API key');
+  } else if (error instanceof RateLimitError) {
+    console.log('Rate limit exceeded');
+  } else if (error instanceof ValidationError) {
+    console.log('Invalid input:', error.message);
   } else if (error instanceof APIError) {
     console.log('API error:', error.message);
+  } else if (error instanceof DermalyticsError) {
+    console.log('Dermalytics error:', error.message);
   }
 }
 ```
+
+### Error Classes
+
+- `DermalyticsError` - Base error class for all SDK errors
+- `APIError` - General API errors (server errors, network issues, invalid responses)
+- `AuthenticationError` - Authentication failures (401, 403)
+- `NotFoundError` - Resource not found (404)
+- `RateLimitError` - Rate limit exceeded (429)
+- `ValidationError` - Invalid request data (400, invalid input parameters)
 
 ## TypeScript Support
 
@@ -187,100 +205,6 @@ npm test
 ```bash
 npm run lint
 ```
-
-## Publishing to npm
-
-### Prerequisites
-
-1. Create an npm account at https://www.npmjs.com/signup
-2. Login to npm:
-```bash
-npm login
-```
-
-3. Verify you're logged in:
-```bash
-npm whoami
-```
-
-### Build and Publish
-
-1. Update version in `package.json`:
-```json
-{
-  "version": "0.1.0"
-}
-```
-
-2. Build the project:
-```bash
-npm run build
-```
-
-3. Verify the build output:
-```bash
-ls dist/
-```
-
-4. Test the package locally (optional):
-```bash
-npm pack
-# This creates a .tgz file you can test
-```
-
-5. Publish to npm:
-```bash
-npm publish
-```
-
-6. Publish to npm with public access (if needed):
-```bash
-npm publish --access public
-```
-
-### Version Management
-
-Use npm's version command to update versions:
-
-```bash
-# Patch version (0.1.0 -> 0.1.1)
-npm version patch
-
-# Minor version (0.1.0 -> 0.2.0)
-npm version minor
-
-# Major version (0.1.0 -> 1.0.0)
-npm version major
-```
-
-This automatically:
-- Updates `package.json`
-- Creates a git tag
-- Commits the changes
-
-Then publish:
-```bash
-npm publish
-```
-
-Follow [Semantic Versioning](https://semver.org/):
-- `MAJOR.MINOR.PATCH` (e.g., `1.0.0`)
-- MAJOR: Breaking changes
-- MINOR: New features (backward compatible)
-- PATCH: Bug fixes (backward compatible)
-
-### Publishing Checklist
-
-- [ ] Update version in `package.json`
-- [ ] Update version in `src/index.ts` (if exported)
-- [ ] Run `npm run build` to ensure build succeeds
-- [ ] Run `npm test` to ensure tests pass
-- [ ] Run `npm run lint` to ensure code quality
-- [ ] Update CHANGELOG.md (if you have one)
-- [ ] Commit all changes
-- [ ] Create git tag: `git tag v0.1.0`
-- [ ] Push to GitHub: `git push && git push --tags`
-- [ ] Publish to npm: `npm publish`
 
 ## Contributing
 

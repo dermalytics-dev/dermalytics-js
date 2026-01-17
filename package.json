@@ -1,6 +1,6 @@
 {
   "name": "dermalytics",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "JavaScript/TypeScript SDK for the Dermalytics API - Skincare Ingredient Analysis",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -46,5 +46,8 @@
   },
   "engines": {
     "node": ">=14.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

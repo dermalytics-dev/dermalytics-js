@@ -47,3 +47,11 @@ export class ValidationError extends DermalyticsError {
     Object.setPrototypeOf(this, ValidationError.prototype);
   }
 }
+
+export class NotImplementedError extends DermalyticsError {
+  constructor(message: string = 'Not implemented') {
+    super(message);
+    this.name = 'NotImplementedError';
+    Object.setPrototypeOf(this, NotImplementedError.prototype);
+  }
+}
