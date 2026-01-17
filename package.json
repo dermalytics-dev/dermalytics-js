@@ -1,5 +1,5 @@
 {
-  "name": "dermalytics",
+  "name": "@dermalytics-dev/dermalytics",
   "version": "0.2.0",
   "description": "JavaScript/TypeScript SDK for the Dermalytics API - Skincare Ingredient Analysis",
   "main": "dist/index.js",
@@ -48,6 +48,7 @@
     "node": ">=14.0.0"
   },
   "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
     "access": "public"
   }
 }
