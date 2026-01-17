@@ -1,0 +1,50 @@
+{
+  "name": "dermalytics",
+  "version": "0.1.0",
+  "description": "JavaScript/TypeScript SDK for the Dermalytics API - Skincare Ingredient Analysis",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint src tests",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "skincare",
+    "ingredients",
+    "api",
+    "dermatology",
+    "cosmetics",
+    "dermalytics"
+  ],
+  "author": "Dermalytics",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dermalytics-dev/dermalytics-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dermalytics-dev/dermalytics-js/issues"
+  },
+  "homepage": "https://github.com/dermalytics-dev/dermalytics-js#readme",
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.0.9",
+    "@typescript-eslint/eslint-plugin": "^8.53.0",
+    "@typescript-eslint/parser": "^8.53.0",
+    "eslint": "^9.39.2",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
