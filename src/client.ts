@@ -8,7 +8,12 @@ import {
   RateLimitError,
   ValidationError,
 } from './errors.js';
-import { AnalyzeResponse, DermalyticsConfig, IngredientResponse } from './types.js';
+import {
+  AnalyzeResponse,
+  DermalyticsConfig,
+  ErrorResponse,
+  IngredientResponse,
+} from './types.js';
 
 export class Dermalytics {
   private readonly apiKey: string;
@@ -73,7 +78,7 @@ export class Dermalytics {
     let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
 
     try {
-      const errorData = (await response.json()) as { error?: { message?: string; code?: string } };
+      const errorData = (await response.json()) as ErrorResponse;
       errorMessage = errorData.error?.message || errorMessage;
     } catch {
       // If JSON parsing fails, use the status text

@@ -4,7 +4,7 @@ JavaScript/TypeScript SDK for the [Dermalytics API](https://dermalytics.dev) - S
 
 ## ⚠️ Status
 
-This SDK is currently in **development** and **alpha testing**. The API is functional but may have breaking changes in future versions. Use with caution in production environments.
+This SDK is currently in **alpha**. The API is functional but may have breaking changes in future versions. Use with caution in production environments.
 
 ## Installation
 
@@ -74,7 +74,7 @@ Initialize the Dermalytics API client.
 **Throws:**
 - `ValidationError`: If API key is missing or invalid
 
-### `getIngredient(name: string): Promise<Ingredient>`
+### `getIngredient(name: string): Promise<IngredientResponse>`
 
 Get detailed information about a specific ingredient.
 
@@ -82,13 +82,13 @@ Get detailed information about a specific ingredient.
 - `name` (string): The name of the ingredient to look up (e.g., "niacinamide")
 
 **Returns:**
-- `Promise<Ingredient>`: Object containing:
+- `Promise<IngredientResponse>`: Object containing (see your API’s `/openapi.json`, e.g. [production OpenAPI](https://api.dermalytics.dev/openapi.json)):
   - `name` (string): Ingredient name
-  - `severity` (string): Safety rating (e.g., "safe", "low_risk", "moderate_risk", "high_risk")
-  - `description` (string, optional): Description of the ingredient
-  - `category` (object): Category information with `name` and `slug`
-  - `condition_safeties` (array): Array of condition-specific safety information
-  - `synonyms` (array): Array of alternative names for the ingredient
+  - `severity` (string): Safety rating (`safe`, `low_risk`, `moderate_risk`, `high_risk`)
+  - Detail fields from `IngredientDetailFields` (e.g. `description`, `comedogenicity`, `irritancy`, `formula`, `functions`, …)
+  - `category` (string, nullable): Primary category label when present
+  - `synonyms` (array): Alternative names for the ingredient
+  - `credits_remaining` (number): Account balance after this request
 
 **Throws:**
 - `ValidationError`: If the ingredient name is invalid
@@ -97,18 +97,18 @@ Get detailed information about a specific ingredient.
 - `RateLimitError`: If rate limit is exceeded
 - `APIError`: For other API errors
 
-### `analyze(ingredients: string[]): Promise<ProductAnalysis>`
+### `analyze(ingredients: string[]): Promise<AnalyzeResponse>`
 
 Analyze a complete product formulation.
 
 **Parameters:**
-- `ingredients` (string[]): Array of ingredient names in the product
+- `ingredients` (string[]): Array of ingredient names in the product (non-empty; matches `AnalyzeRequest`)
 
 **Returns:**
-- `Promise<ProductAnalysis>`: Object containing:
+- `Promise<AnalyzeResponse>`: Object containing (see your API’s `/openapi.json`):
   - `safety_status` (string): Overall safety status of the product
-  - `ingredients` (array): Array of analyzed ingredients with their safety ratings
-  - `warnings` (array): Array of warnings for specific conditions or interactions
+  - `ingredients` (array): Analyzed rows (`IngredientAnalysis`, including `found`, `severity`, `category`, …)
+  - `credits_remaining` (number): Account balance after this request
 
 **Throws:**
 - `ValidationError`: If the ingredients array is invalid
@@ -164,12 +164,13 @@ This SDK is written in TypeScript and includes full type definitions. All types 
 
 ```typescript
 import type {
-  Ingredient,
-  ProductAnalysis,
-  Category,
-  ConditionSafety,
+  IngredientResponse,
+  IngredientDetailFields,
   IngredientAnalysis,
-  Warning,
+  AnalyzeRequest,
+  AnalyzeResponse,
+  ErrorResponse,
+  Severity,
   DermalyticsConfig,
 } from 'dermalytics';
 ```
@@ -233,10 +234,10 @@ You must:
 
 ## Links
 
+- [npm: `dermalytics`](https://www.npmjs.com/package/dermalytics)
 - [Dermalytics API Documentation](https://docs.dermalytics.dev)
 - [GitHub Repository](https://github.com/dermalytics-dev/dermalytics-js)
 - [Issue Tracker](https://github.com/dermalytics-dev/dermalytics-js/issues)
-- [npm Package](https://www.npmjs.com/package/dermalytics)
 
 ## Support
 

@@ -2,17 +2,6 @@
 
 export type Severity = 'safe' | 'low_risk' | 'moderate_risk' | 'high_risk';
 
-export interface CategoryRef {
-  name: string;
-  slug: string;
-}
-
-export interface ConditionSafety {
-  condition: string;
-  severity: Severity;
-  reason: string;
-}
-
 export interface IngredientDetailFields {
   description: string | null;
   comedogenicity: number | null;
@@ -28,8 +17,7 @@ export interface IngredientDetailFields {
 export interface IngredientResponse extends IngredientDetailFields {
   name: string;
   severity: Severity;
-  categories: CategoryRef[];
-  condition_safeties: ConditionSafety[];
+  category: string | null;
   synonyms: string[];
   credits_remaining: number;
 }
@@ -41,18 +29,25 @@ export interface IngredientAnalysis extends IngredientDetailFields {
   category: string | null;
 }
 
-export interface Warning {
-  ingredient: string;
-  condition: string;
-  severity: Severity;
-  reason: string;
+export interface AnalyzeRequest {
+  ingredients: string[];
 }
 
 export interface AnalyzeResponse {
   safety_status: Severity;
   ingredients: IngredientAnalysis[];
-  warnings: Warning[];
   credits_remaining: number;
+}
+
+/** Error payload shape returned by the API on 4xx/5xx responses */
+export interface ErrorBody {
+  code: string;
+  message: string;
+  type?: string;
+}
+
+export interface ErrorResponse {
+  error: ErrorBody;
 }
 
 export interface DermalyticsConfig {

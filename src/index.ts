@@ -4,4 +4,4 @@ export { Dermalytics } from './client.js';
 export * from './types.js';
 export * from './errors.js';
 
-export const version = '0.3.1';
+export const version = '0.4.0';
