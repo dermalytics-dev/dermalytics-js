@@ -7,8 +7,8 @@ import {
   NotFoundError,
   RateLimitError,
   ValidationError,
-} from './errors';
-import { AnalyzeResponse, DermalyticsConfig, IngredientResponse } from './types';
+} from './errors.js';
+import { AnalyzeResponse, DermalyticsConfig, IngredientResponse } from './types.js';
 
 export class Dermalytics {
   private readonly apiKey: string;

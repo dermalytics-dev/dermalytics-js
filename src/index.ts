@@ -1,7 +1,7 @@
 /** Dermalytics SDK for JavaScript/TypeScript - Skincare Ingredient Analysis API */
 
-export { Dermalytics } from './client';
-export * from './types';
-export * from './errors';
+export { Dermalytics } from './client.js';
+export * from './types.js';
+export * from './errors.js';
 
-export const version = '0.3.0';
+export const version = '0.3.1';
