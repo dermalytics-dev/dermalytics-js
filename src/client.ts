@@ -3,11 +3,12 @@
 import {
   APIError,
   AuthenticationError,
+  InsufficientCreditsError,
   NotFoundError,
   RateLimitError,
   ValidationError,
 } from './errors';
-import { DermalyticsConfig, Ingredient, ProductAnalysis } from './types';
+import { AnalyzeResponse, DermalyticsConfig, IngredientResponse } from './types';
 
 export class Dermalytics {
   private readonly apiKey: string;
@@ -47,7 +48,6 @@ export class Dermalytics {
         },
       });
     } catch (error) {
-      // Network errors (connection failed, timeout, etc.)
       throw new APIError(
         error instanceof Error ? error.message : 'Network request failed'
       );
@@ -59,8 +59,7 @@ export class Dermalytics {
 
     try {
       return (await response.json()) as T;
-    } catch (error) {
-      // JSON parsing errors
+    } catch {
       throw new APIError('Invalid response format from server');
     }
   }
@@ -74,8 +73,8 @@ export class Dermalytics {
     let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
 
     try {
-      const errorData = (await response.json()) as { message?: string; error?: string };
-      errorMessage = errorData.message || errorData.error || errorMessage;
+      const errorData = (await response.json()) as { error?: { message?: string; code?: string } };
+      errorMessage = errorData.error?.message || errorMessage;
     } catch {
       // If JSON parsing fails, use the status text
     }
@@ -84,6 +83,8 @@ export class Dermalytics {
       case 401:
       case 403:
         throw new AuthenticationError(errorMessage);
+      case 402:
+        throw new InsufficientCreditsError(errorMessage);
       case 404:
         throw new NotFoundError(errorMessage);
       case 429:
@@ -103,38 +104,38 @@ export class Dermalytics {
   /**
    * Get detailed information about a specific ingredient.
    *
-   * @param name - The name of the ingredient to look up
+   * @param name - The INCI-style name or known synonym of the ingredient
    * @returns Promise resolving to ingredient information
    * @throws {ValidationError} If the ingredient name is invalid
    * @throws {NotFoundError} If the ingredient is not found
    * @throws {AuthenticationError} If authentication fails
-   * @throws {RateLimitError} If rate limit is exceeded
+   * @throws {InsufficientCreditsError} If the account has insufficient credits
    * @throws {APIError} For other API errors
    */
-  async getIngredient(name: string): Promise<Ingredient> {
+  async getIngredient(name: string): Promise<IngredientResponse> {
     if (!name || typeof name !== 'string' || name.trim().length === 0) {
       throw new ValidationError('Ingredient name is required');
     }
 
-    return this.request<Ingredient>(`/ingredients/${encodeURIComponent(name.trim())}`);
+    return this.request<IngredientResponse>(`/v1/ingredients/${encodeURIComponent(name.trim())}`);
   }
 
   /**
-   * Analyze a complete product formulation.
+   * Analyze a list of ingredients for safety and compatibility.
    *
-   * @param ingredients - Array of ingredient names in the product
-   * @returns Promise resolving to product analysis
+   * @param ingredients - Array of ingredient names to analyze
+   * @returns Promise resolving to analysis results
    * @throws {ValidationError} If the ingredients array is invalid
    * @throws {AuthenticationError} If authentication fails
-   * @throws {RateLimitError} If rate limit is exceeded
+   * @throws {InsufficientCreditsError} If the account has insufficient credits
    * @throws {APIError} For other API errors
    */
-  async analyze(ingredients: string[]): Promise<ProductAnalysis> {
+  async analyze(ingredients: string[]): Promise<AnalyzeResponse> {
     if (!Array.isArray(ingredients) || ingredients.length === 0) {
       throw new ValidationError('Ingredients array is required and must not be empty');
     }
 
-    return this.request<ProductAnalysis>('/analyze', {
+    return this.request<AnalyzeResponse>('/v1/analyze', {
       method: 'POST',
       body: JSON.stringify({ ingredients }),
     });

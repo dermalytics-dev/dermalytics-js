@@ -24,6 +24,14 @@ export class AuthenticationError extends DermalyticsError {
   }
 }
 
+export class InsufficientCreditsError extends DermalyticsError {
+  constructor(message: string) {
+    super(message);
+    this.name = 'InsufficientCreditsError';
+    Object.setPrototypeOf(this, InsufficientCreditsError.prototype);
+  }
+}
+
 export class NotFoundError extends DermalyticsError {
   constructor(message: string) {
     super(message);
@@ -45,13 +53,5 @@ export class ValidationError extends DermalyticsError {
     super(message);
     this.name = 'ValidationError';
     Object.setPrototypeOf(this, ValidationError.prototype);
-  }
-}
-
-export class NotImplementedError extends DermalyticsError {
-  constructor(message: string = 'Not implemented') {
-    super(message);
-    this.name = 'NotImplementedError';
-    Object.setPrototypeOf(this, NotImplementedError.prototype);
   }
 }

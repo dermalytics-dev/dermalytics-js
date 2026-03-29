@@ -1,6 +1,6 @@
 {
   "name": "@dermalytics-dev/dermalytics",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "JavaScript/TypeScript SDK for the Dermalytics API - Skincare Ingredient Analysis",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
