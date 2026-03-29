@@ -35,7 +35,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dermalytics-dev/dermalytics-js.git"
+    "url": "git+https://github.com/dermalytics-dev/dermalytics-js.git"
   },
   "bugs": {
     "url": "https://github.com/dermalytics-dev/dermalytics-js/issues"
@@ -55,7 +55,6 @@
     "node": ">=14.0.0"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
     "access": "public"
   }
 }
