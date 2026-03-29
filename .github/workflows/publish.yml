@@ -14,9 +14,15 @@ jobs:
         with:
           node-version: 'lts/*'
           registry-url: 'https://npm.pkg.github.com'
+      - run: npm config delete always-auth || true
       - run: npm install
       - run: |
           npm pkg set name='@dermalytics-dev/dermalytics'
-          npm publish
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "@dermalytics-dev/dermalytics@${VERSION}" version --registry https://npm.pkg.github.com 2>/dev/null; then
+            echo "Version ${VERSION} already published, skipping."
+          else
+            npm publish
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
