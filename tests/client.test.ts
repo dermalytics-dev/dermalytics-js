@@ -49,6 +49,7 @@ describe('getIngredient', () => {
       ec_no: null,
       ph_eur_name: null,
       functions: ['Skin conditioning'],
+      trait_flags: [],
       category: 'Vitamins',
       synonyms: ['Vitamin B3'],
       credits_remaining: 99,
@@ -61,6 +62,7 @@ describe('getIngredient', () => {
     expect(result.name).toBe('Niacinamide');
     expect(result.credits_remaining).toBe(99);
     expect(result.category).toBe('Vitamins');
+    expect(result.trait_flags).toEqual([]);
     expect(mockFetch).toHaveBeenCalledWith(
       'https://api.dermalytics.dev/v1/ingredients/niacinamide',
       expect.objectContaining({ headers: expect.objectContaining({ Authorization: 'Bearer test-key' }) })
@@ -110,6 +112,7 @@ describe('analyze', () => {
           ec_no: null,
           ph_eur_name: null,
           functions: [],
+          trait_flags: ['fragrance'],
         },
       ],
       credits_remaining: 98,
@@ -122,6 +125,7 @@ describe('analyze', () => {
     expect(result.safety_status).toBe('safe');
     expect(result.credits_remaining).toBe(98);
     expect(result.ingredients[0].found).toBe(true);
+    expect(result.ingredients[0].trait_flags).toEqual(['fragrance']);
     expect(mockFetch).toHaveBeenCalledWith(
       'https://api.dermalytics.dev/v1/analyze',
       expect.objectContaining({ method: 'POST' })

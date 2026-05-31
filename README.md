@@ -85,7 +85,7 @@ Get detailed information about a specific ingredient.
 - `Promise<IngredientResponse>`: Object containing (see your API’s `/openapi.json`, e.g. [production OpenAPI](https://api.dermalytics.dev/openapi.json)):
   - `name` (string): Ingredient name
   - `severity` (string): Safety rating (`safe`, `low_risk`, `moderate_risk`, `high_risk`)
-  - Detail fields from `IngredientDetailFields` (e.g. `description`, `comedogenicity`, `irritancy`, `formula`, `functions`, …)
+  - Detail fields from `IngredientDetailFields` (e.g. `description`, `comedogenicity`, `irritancy`, `formula`, `functions`, `trait_flags`, ...)
   - `category` (string, nullable): Primary category label when present
   - `synonyms` (array): Alternative names for the ingredient
   - `credits_remaining` (number): Account balance after this request
@@ -107,7 +107,7 @@ Analyze a complete product formulation.
 **Returns:**
 - `Promise<AnalyzeResponse>`: Object containing (see your API’s `/openapi.json`):
   - `safety_status` (string): Overall safety status of the product
-  - `ingredients` (array): Analyzed rows (`IngredientAnalysis`, including `found`, `severity`, `category`, …)
+  - `ingredients` (array): Analyzed rows (`IngredientAnalysis`, including `found`, `severity`, `category`, `trait_flags`, ...)
   - `credits_remaining` (number): Account balance after this request
 
 **Throws:**
@@ -171,6 +171,7 @@ import type {
   AnalyzeResponse,
   ErrorResponse,
   Severity,
+  TraitFlag,
   DermalyticsConfig,
 } from 'dermalytics';
 ```

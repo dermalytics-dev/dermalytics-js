@@ -2,6 +2,17 @@
 
 export type Severity = 'safe' | 'low_risk' | 'moderate_risk' | 'high_risk';
 
+export type TraitFlag =
+  | 'drying_alcohol'
+  | 'fragrance'
+  | 'paraben'
+  | 'silicone'
+  | 'sulfate'
+  | 'oil'
+  | 'fungal_acne_trigger'
+  | 'reef_unsafe'
+  | 'eu_allergen';
+
 export interface IngredientDetailFields {
   description: string | null;
   comedogenicity: number | null;
@@ -12,6 +23,7 @@ export interface IngredientDetailFields {
   ec_no: string | null;
   ph_eur_name: string | null;
   functions: string[];
+  trait_flags: TraitFlag[];
 }
 
 export interface IngredientResponse extends IngredientDetailFields {
