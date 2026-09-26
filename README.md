@@ -2,7 +2,7 @@
 
 Search cosmetic products and ingredients, retrieve INCI lists, and analyze ingredient data with a typed JavaScript and TypeScript client.
 
-[Documentation](https://www.dermalytics.dev/docs) · [Get an API key](https://www.dermalytics.dev/dashboard) · [OpenAPI](https://api.dermalytics.dev/openapi.json)
+[Package](https://www.npmjs.com/package/dermalytics) · [Documentation](https://www.dermalytics.dev/docs) · [Get an API key](https://www.dermalytics.dev/dashboard) · [OpenAPI](https://api.dermalytics.dev/openapi.json)
 
 ## Install
 
@@ -215,7 +215,7 @@ if (page.data.length > 0) {
 }
 ```
 
-See [all exported types](src/types.ts) for ingredient responses, analysis, pagination and errors.
+See [all exported types](https://github.com/dermalytics-dev/dermalytics-js/blob/main/src/types.ts) for ingredient responses, analysis, pagination and errors.
 
 ## Develop
 
@@ -231,4 +231,4 @@ pnpm build
 - [API reference and examples](https://www.dermalytics.dev/docs)
 - [Account, API keys and credits](https://www.dermalytics.dev/dashboard)
 - [Report an SDK issue](https://github.com/dermalytics-dev/dermalytics-js/issues)
-- [MIT license](LICENSE)
+- [MIT license](https://github.com/dermalytics-dev/dermalytics-js/blob/main/LICENSE)
