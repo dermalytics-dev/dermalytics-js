@@ -1,0 +1,327 @@
+[
+  {
+    "kind": "ingredient",
+    "expected": {
+      "name": "example",
+      "severity": "example",
+      "category": null,
+      "synonyms": [
+        "example"
+      ],
+      "credits_remaining": 1,
+      "description": null,
+      "comedogenicity": null,
+      "irritancy": null,
+      "formula": null,
+      "molecular_weight": null,
+      "cas_no": null,
+      "ec_no": null,
+      "ph_eur_name": null,
+      "functions": [
+        "example"
+      ],
+      "trait_flags": [
+        "example"
+      ]
+    },
+    "input": {
+      "name": "example",
+      "severity": "example",
+      "category": null,
+      "synonyms": [
+        "example"
+      ],
+      "credits_remaining": 1,
+      "description": null,
+      "comedogenicity": null,
+      "irritancy": null,
+      "formula": null,
+      "molecular_weight": null,
+      "cas_no": null,
+      "ec_no": null,
+      "ph_eur_name": null,
+      "functions": [
+        "example"
+      ],
+      "trait_flags": [
+        "example"
+      ],
+      "internal_secret": "PRIVATE_MARKER",
+      "source": "PRIVATE_MARKER",
+      "slug": "PRIVATE_MARKER",
+      "image_url": "PRIVATE_MARKER",
+      "description_private": "PRIVATE_MARKER",
+      "concentration": "PRIVATE_MARKER"
+    }
+  },
+  {
+    "kind": "analysis",
+    "expected": {
+      "safety_status": "example",
+      "ingredients": [
+        {
+          "name": "example",
+          "found": false,
+          "severity": "example",
+          "category": null,
+          "description": null,
+          "comedogenicity": null,
+          "irritancy": null,
+          "formula": null,
+          "molecular_weight": null,
+          "cas_no": null,
+          "ec_no": null,
+          "ph_eur_name": null,
+          "functions": [
+            "example"
+          ],
+          "trait_flags": [
+            "example"
+          ]
+        }
+      ],
+      "credits_remaining": 1
+    },
+    "input": {
+      "safety_status": "example",
+      "ingredients": [
+        {
+          "name": "example",
+          "found": false,
+          "severity": "example",
+          "category": null,
+          "description": null,
+          "comedogenicity": null,
+          "irritancy": null,
+          "formula": null,
+          "molecular_weight": null,
+          "cas_no": null,
+          "ec_no": null,
+          "ph_eur_name": null,
+          "functions": [
+            "example"
+          ],
+          "trait_flags": [
+            "example"
+          ],
+          "internal_secret": "PRIVATE_MARKER",
+          "source": "PRIVATE_MARKER",
+          "slug": "PRIVATE_MARKER",
+          "image_url": "PRIVATE_MARKER",
+          "description_private": "PRIVATE_MARKER",
+          "concentration": "PRIVATE_MARKER"
+        }
+      ],
+      "credits_remaining": 1,
+      "internal_secret": "PRIVATE_MARKER",
+      "source": "PRIVATE_MARKER",
+      "slug": "PRIVATE_MARKER",
+      "image_url": "PRIVATE_MARKER",
+      "description_private": "PRIVATE_MARKER",
+      "concentration": "PRIVATE_MARKER"
+    }
+  },
+  {
+    "kind": "ingredientSearch",
+    "expected": {
+      "data": [
+        {
+          "id": "example",
+          "name": "example",
+          "cas_no": null,
+          "ec_no": null,
+          "functions": [
+            "example"
+          ],
+          "ratings_available": {
+            "comedogenicity": false,
+            "irritancy": false
+          },
+          "record_updated_at": "example"
+        }
+      ],
+      "pagination": {
+        "limit": 1,
+        "offset": 1,
+        "next_offset": null
+      },
+      "credits_remaining": 1
+    },
+    "input": {
+      "data": [
+        {
+          "id": "example",
+          "name": "example",
+          "cas_no": null,
+          "ec_no": null,
+          "functions": [
+            "example"
+          ],
+          "ratings_available": {
+            "comedogenicity": false,
+            "irritancy": false,
+            "internal_secret": "PRIVATE_MARKER",
+            "source": "PRIVATE_MARKER",
+            "slug": "PRIVATE_MARKER",
+            "image_url": "PRIVATE_MARKER",
+            "description_private": "PRIVATE_MARKER",
+            "concentration": "PRIVATE_MARKER"
+          },
+          "record_updated_at": "example",
+          "internal_secret": "PRIVATE_MARKER",
+          "source": "PRIVATE_MARKER",
+          "slug": "PRIVATE_MARKER",
+          "image_url": "PRIVATE_MARKER",
+          "description_private": "PRIVATE_MARKER",
+          "concentration": "PRIVATE_MARKER"
+        }
+      ],
+      "pagination": {
+        "limit": 1,
+        "offset": 1,
+        "next_offset": null,
+        "internal_secret": "PRIVATE_MARKER",
+        "source": "PRIVATE_MARKER",
+        "slug": "PRIVATE_MARKER",
+        "image_url": "PRIVATE_MARKER",
+        "description_private": "PRIVATE_MARKER",
+        "concentration": "PRIVATE_MARKER"
+      },
+      "credits_remaining": 1,
+      "internal_secret": "PRIVATE_MARKER",
+      "source": "PRIVATE_MARKER",
+      "slug": "PRIVATE_MARKER",
+      "image_url": "PRIVATE_MARKER",
+      "description_private": "PRIVATE_MARKER",
+      "concentration": "PRIVATE_MARKER"
+    }
+  },
+  {
+    "kind": "productSearch",
+    "expected": {
+      "data": [
+        {
+          "id": "example",
+          "name": "example",
+          "brand": null,
+          "category": null,
+          "ingredients_count": 1,
+          "area": null,
+          "traits_cache": [
+            "example"
+          ],
+          "key_ingredient_tags": [
+            "example"
+          ]
+        }
+      ],
+      "pagination": {
+        "limit": 1,
+        "offset": 1,
+        "next_offset": null
+      },
+      "credits_remaining": 1
+    },
+    "input": {
+      "data": [
+        {
+          "id": "example",
+          "name": "example",
+          "brand": null,
+          "category": null,
+          "ingredients_count": 1,
+          "area": null,
+          "traits_cache": [
+            "example"
+          ],
+          "key_ingredient_tags": [
+            "example"
+          ],
+          "internal_secret": "PRIVATE_MARKER",
+          "source": "PRIVATE_MARKER",
+          "slug": "PRIVATE_MARKER",
+          "image_url": "PRIVATE_MARKER",
+          "description_private": "PRIVATE_MARKER",
+          "concentration": "PRIVATE_MARKER"
+        }
+      ],
+      "pagination": {
+        "limit": 1,
+        "offset": 1,
+        "next_offset": null,
+        "internal_secret": "PRIVATE_MARKER",
+        "source": "PRIVATE_MARKER",
+        "slug": "PRIVATE_MARKER",
+        "image_url": "PRIVATE_MARKER",
+        "description_private": "PRIVATE_MARKER",
+        "concentration": "PRIVATE_MARKER"
+      },
+      "credits_remaining": 1,
+      "internal_secret": "PRIVATE_MARKER",
+      "source": "PRIVATE_MARKER",
+      "slug": "PRIVATE_MARKER",
+      "image_url": "PRIVATE_MARKER",
+      "description_private": "PRIVATE_MARKER",
+      "concentration": "PRIVATE_MARKER"
+    }
+  },
+  {
+    "kind": "product",
+    "expected": {
+      "id": "example",
+      "name": "example",
+      "brand": null,
+      "category": null,
+      "ingredients_count": 1,
+      "area": null,
+      "traits_cache": [
+        "example"
+      ],
+      "key_ingredient_tags": [
+        "example"
+      ],
+      "ingredients": [
+        {
+          "id": "example",
+          "name": "example",
+          "position": null
+        }
+      ],
+      "credits_remaining": 1
+    },
+    "input": {
+      "id": "example",
+      "name": "example",
+      "brand": null,
+      "category": null,
+      "ingredients_count": 1,
+      "area": null,
+      "traits_cache": [
+        "example"
+      ],
+      "key_ingredient_tags": [
+        "example"
+      ],
+      "ingredients": [
+        {
+          "id": "example",
+          "name": "example",
+          "position": null,
+          "internal_secret": "PRIVATE_MARKER",
+          "source": "PRIVATE_MARKER",
+          "slug": "PRIVATE_MARKER",
+          "image_url": "PRIVATE_MARKER",
+          "description_private": "PRIVATE_MARKER",
+          "concentration": "PRIVATE_MARKER"
+        }
+      ],
+      "credits_remaining": 1,
+      "internal_secret": "PRIVATE_MARKER",
+      "source": "PRIVATE_MARKER",
+      "slug": "PRIVATE_MARKER",
+      "image_url": "PRIVATE_MARKER",
+      "description_private": "PRIVATE_MARKER",
+      "concentration": "PRIVATE_MARKER"
+    }
+  }
+]

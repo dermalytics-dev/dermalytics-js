@@ -1,245 +1,234 @@
-# Dermalytics JavaScript/TypeScript SDK
+# Dermalytics JavaScript SDK
 
-JavaScript/TypeScript SDK for the [Dermalytics API](https://dermalytics.dev) - Skincare Ingredient Analysis and Safety Ratings.
+Search cosmetic products and ingredients, retrieve INCI lists, and analyze ingredient data with a typed JavaScript and TypeScript client.
 
-## ⚠️ Status
+[Documentation](https://www.dermalytics.dev/docs) · [Get an API key](https://www.dermalytics.dev/dashboard) · [OpenAPI](https://api.dermalytics.dev/openapi.json)
 
-This SDK is currently in **alpha**. The API is functional but may have breaking changes in future versions. Use with caution in production environments.
+## Install
 
-## Installation
-
-```bash
+```sh
 npm install dermalytics
 ```
 
-or with yarn:
+The package uses ES modules and requires a global `fetch` implementation. Node.js 18+ provides it natively. Keep your API key in server-side code.
 
-```bash
-yarn add dermalytics
-```
+## Try without an API key
 
-or with pnpm:
-
-```bash
-pnpm add dermalytics
-```
-
-## Quick Start
-
-### TypeScript/ES Modules
-
-```typescript
+```js
 import { Dermalytics } from 'dermalytics';
 
-// Initialize the client
-const client = new Dermalytics({
-  apiKey: 'your_api_key_here'
-});
-
-// Get ingredient details
-const ingredient = await client.getIngredient('niacinamide');
-console.log(ingredient);
-
-// Analyze a product
-const analysis = await client.analyze([
-  'Aqua',
-  'Glycerin',
-  'Niacinamide',
-  'Salicylic Acid',
-  'Hyaluronic Acid'
-]);
-console.log(analysis);
+const client = new Dermalytics();
+const matches = await client.searchIngredients('Niacinamide');
+console.log(matches.data);
 ```
 
-### CommonJS
+Try the REST API without an API key: **5 requests per IP address in a 24-hour window**, starting with the first request. Search returns up to 3 results, with no pagination; analysis accepts up to 5 ingredient names. The quota is shared across all REST data methods. Empty results and invalid requests that reach the API also use an attempt.
 
-```javascript
-const { Dermalytics } = require('dermalytics');
+Responses keep the same fields. Without an account, `credits_remaining` is `0`; it is not your free-request balance. HTTP headers `X-Free-Requests-Remaining` and `X-Free-Requests-Reset` report the remaining attempts and reset time (Unix seconds). HTTP 429 includes `Retry-After`. Get a key from the [dashboard](https://www.dermalytics.dev/dashboard) for full access and 100 welcome credits. Supplying an invalid key returns an authentication error; it never falls back to free access. Shared IP addresses share a quota; IPv6 addresses within a /64 share one bucket.
 
-const client = new Dermalytics({
-  apiKey: 'your_api_key_here'
+After the second keyless request, `client.signupUrl` contains the registration URL. When the quota is exhausted, `RateLimitError` also includes the link in its message. The SDK does not open a browser or print unsolicited messages.
+
+## Use an API key
+
+Set `DERMALYTICS_API_KEY` in your environment, then run this code in an ES module:
+
+```js
+import { Dermalytics } from 'dermalytics';
+
+const apiKey = process.env.DERMALYTICS_API_KEY;
+if (!apiKey) throw new Error('Set DERMALYTICS_API_KEY');
+
+const client = new Dermalytics({ apiKey });
+
+const page = await client.searchProducts('cream', {
+  ingredient: 'Niacinamide',
+  limit: 5,
 });
+
+for (const product of page.data) {
+  console.log(product.id, product.name, product.brand);
+}
+
+if (page.data.length > 0) {
+  const product = await client.getProduct(page.data[0].id);
+  console.log(product.ingredients);
+  console.log('Credits remaining:', product.credits_remaining);
+}
 ```
 
-## API Reference
+The examples below use this `client`. Its default base URL is `https://api.dermalytics.dev`; set `baseUrl` in the constructor to use another deployment. In CommonJS, load the package with `await import('dermalytics')` inside an async function.
 
-### `new Dermalytics(config: DermalyticsConfig)`
+## Methods and credits
 
-Initialize the Dermalytics API client.
+All methods return a promise. Successful responses include `credits_remaining`.
 
-**Parameters:**
-- `config.apiKey` (string): Your Dermalytics API key
-- `config.baseUrl` (string, optional): Base URL for the API (defaults to `https://api.dermalytics.dev`)
+| Method | Returns | Credits |
+| --- | --- | --- |
+| `searchIngredients(query, options?)` | `IngredientSearchResponse` | 1 per non-empty page |
+| `getIngredient(name)` | `IngredientResponse` | 1 per successful lookup |
+| `searchProducts(query, options?)` | `ProductSearchResponse` | 1 per non-empty page |
+| `getProduct(id)` | `ProductResponse` | 1 per successful lookup |
+| `analyze(ingredients)` | `AnalyzeResponse` | 1 per matched ingredient row |
 
-**Throws:**
-- `ValidationError`: If API key is missing or invalid
+`analyzeProduct(ingredients)` is an alias for `analyze(ingredients)`. For requests with an API key, empty search pages, missing records and validation errors do not consume credits. Product lookup accepts a UUID returned by product search.
 
-### `getIngredient(name: string): Promise<IngredientResponse>`
+## Search ingredients
 
-Get detailed information about a specific ingredient.
+```js
+const matches = await client.searchIngredients('niacinamide', { limit: 10 });
+const byCas = await client.searchIngredients('98-92-0');
+const ingredient = await client.getIngredient('Niacinamide');
 
-**Parameters:**
-- `name` (string): The name of the ingredient to look up (e.g., "niacinamide")
+console.log(matches.data);
+console.log(byCas.data);
+console.log(ingredient.functions, ingredient.trait_flags);
+```
 
-**Returns:**
-- `Promise<IngredientResponse>`: Object containing (see your API’s `/openapi.json`, e.g. [production OpenAPI](https://api.dermalytics.dev/openapi.json)):
-  - `name` (string): Ingredient name
-  - `severity` (string): Safety rating (`safe`, `low_risk`, `moderate_risk`, `high_risk`)
-  - Detail fields from `IngredientDetailFields` (e.g. `description`, `comedogenicity`, `irritancy`, `formula`, `functions`, `trait_flags`, ...)
-  - `category` (string, nullable): Primary category label when present
-  - `synonyms` (array): Alternative names for the ingredient
-  - `credits_remaining` (number): Account balance after this request
+## Search products and paginate
 
-**Throws:**
-- `ValidationError`: If the ingredient name is invalid
-- `NotFoundError`: If the ingredient is not found
-- `AuthenticationError`: If authentication fails
-- `RateLimitError`: If rate limit is exceeded
-- `APIError`: For other API errors
+```js
+const query = 'cream';
+const options = { brand: 'CeraVe', ingredient: 'Niacinamide', limit: 10 };
+const firstPage = await client.searchProducts(query, options);
 
-### `analyze(ingredients: string[]): Promise<AnalyzeResponse>`
+// Fetch one additional page when needed. Each non-empty page costs 1 credit.
+if (firstPage.pagination.next_offset !== null) {
+  const nextPage = await client.searchProducts(query, {
+    ...options,
+    offset: firstPage.pagination.next_offset,
+  });
+  console.log(nextPage.data);
+}
+```
 
-Analyze a complete product formulation.
+Search queries contain 2–100 characters. Ingredient search matches names and synonyms by case-insensitive substring, or CAS/EC numbers exactly. Product search matches product names and brands by case-insensitive substring.
 
-**Parameters:**
-- `ingredients` (string[]): Array of ingredient names in the product (non-empty; matches `AnalyzeRequest`)
+| Option | Default | Accepted values |
+| --- | --- | --- |
+| `limit` | `20` with a key; `3` without | Integer from 1 to 50 with a key; 1 to 3 without |
+| `offset` | `0` | Integer from 0 to 10,000 with a key; `0` without |
+| `brand` | Omitted | Exact brand, case-insensitive; 1–255 characters |
+| `ingredient` | Omitted | Exact ingredient name or known synonym, case-insensitive; 1–255 characters |
 
-**Returns:**
-- `Promise<AnalyzeResponse>`: Object containing (see your API’s `/openapi.json`):
-  - `safety_status` (string): Overall safety status of the product
-  - `ingredients` (array): Analyzed rows (`IngredientAnalysis`, including `found`, `severity`, `category`, `trait_flags`, ...)
-  - `credits_remaining` (number): Account balance after this request
+`brand` and `ingredient` apply only to product search. Results are ordered by name, then ID. Each page has `data`, `pagination` (`limit`, `offset`, `next_offset`) and `credits_remaining`. A null `next_offset` means there is no next page within the supported offset range. Requests are never automatically paginated or retried.
 
-**Throws:**
-- `ValidationError`: If the ingredients array is invalid
-- `AuthenticationError`: If authentication fails
-- `RateLimitError`: If rate limit is exceeded
-- `APIError`: For other API errors
+## Analyze an ingredient list
 
-## Error Handling
+```js
+const analysis = await client.analyze(['Water', 'Glycerin', 'Niacinamide']);
 
-The SDK provides comprehensive error handling with specific error classes for different scenarios:
+for (const ingredient of analysis.ingredients) {
+  if (!ingredient.found) {
+    console.log('Not found:', ingredient.name);
+    continue;
+  }
+  console.log(ingredient.name, ingredient.comedogenicity, ingredient.irritancy);
+}
 
-```typescript
+console.log('Credits remaining:', analysis.credits_remaining);
+```
+
+To analyze a stored product composition, pass `product.ingredients.map(item => item.name)` to `analyze`. Check that the list is non-empty before calling it. Product lookup and analysis are separate paid operations.
+
+## Product fields
+
+Product search returns these fields for each result. Product lookup returns the same fields plus the stored ingredient list.
+
+| Field | Meaning |
+| --- | --- |
+| `id` | Product UUID; pass it to product lookup |
+| `name` | Product name |
+| `brand` | Brand, or null |
+| `category` | Category name, or null |
+| `area` | `face`, `eyes`, `lips`, `body`, `hair`, `nails`, or null |
+| `ingredients_count` | Number of linked ingredients |
+| `traits_cache` | Stored product trait tags |
+| `key_ingredient_tags` | Stored key-ingredient tags |
+| `ingredients` | Lookup only: entries with `id`, `name` and nullable `position` |
+
+Only active products are returned. A product lookup response also includes `credits_remaining`. Null values mean the information is unavailable; an empty ingredient list means no linked composition is available. Tags describe stored metadata, not independently verified product claims.
+
+## Ingredient and analysis fields
+
+Ingredient search returns `id`, `name`, `cas_no`, `ec_no`, `functions`, `ratings_available` and `record_updated_at`. The availability flags indicate whether comedogenicity and irritancy ratings exist. The timestamp records a database update, not a formulation verification date.
+
+Ingredient lookup returns `name`, `severity`, `category`, `synonyms` and `credits_remaining`, together with these detail fields:
+
+- `comedogenicity`, `irritancy`: nullable ratings from 0 to 5.
+- `formula`, `molecular_weight`, `cas_no`, `ec_no`, `ph_eur_name`: nullable identifiers and chemical metadata.
+- `functions`, `trait_flags`: lists of cosmetic functions and ingredient tags.
+- `description`: nullable text; currently returned as null.
+
+Analysis returns `safety_status`, `ingredients` and `credits_remaining`. Each ingredient row contains `name`, `found`, `severity`, `category` and the detail fields above. Severity values are `safe`, `low_risk`, `moderate_risk` and `high_risk`. Check `found` and the nullable ratings when interpreting results: a missing record or rating is not evidence of safety.
+
+The SDK returns only documented fields, including nested records. The [OpenAPI specification](https://api.dermalytics.dev/openapi.json) defines the HTTP response schemas.
+
+## Handle errors
+
+```js
 import {
   DermalyticsError,
-  APIError,
-  AuthenticationError,
+  InsufficientCreditsError,
   NotFoundError,
-  RateLimitError,
-  ValidationError,
 } from 'dermalytics';
 
 try {
-  const ingredient = await client.getIngredient('niacinamide');
+  const ingredient = await client.getIngredient('Niacinamide');
+  console.log(ingredient.name);
 } catch (error) {
-  if (error instanceof NotFoundError) {
-    console.log('Ingredient not found');
-  } else if (error instanceof AuthenticationError) {
-    console.log('Invalid API key');
-  } else if (error instanceof RateLimitError) {
-    console.log('Rate limit exceeded');
-  } else if (error instanceof ValidationError) {
-    console.log('Invalid input:', error.message);
-  } else if (error instanceof APIError) {
-    console.log('API error:', error.message);
+  if (error instanceof InsufficientCreditsError) {
+    console.error('Add credits in the dashboard before continuing.');
+  } else if (error instanceof NotFoundError) {
+    console.error('No ingredient matched that name.');
   } else if (error instanceof DermalyticsError) {
-    console.log('Dermalytics error:', error.message);
+    console.error(error.message);
+  } else {
+    throw error;
   }
 }
 ```
 
-### Error Classes
+| Error | When it occurs |
+| --- | --- |
+| `ValidationError` | Invalid SDK input or HTTP 400 |
+| `AuthenticationError` | HTTP 401 or 403 |
+| `InsufficientCreditsError` | HTTP 402 |
+| `NotFoundError` | HTTP 404 |
+| `RateLimitError` | HTTP 429, including the free-request limit |
+| `APIError` | Network failure, invalid response or another HTTP error, including 503 when the catalog is unavailable |
 
-- `DermalyticsError` - Base error class for all SDK errors
-- `APIError` - General API errors (server errors, network issues, invalid responses)
-- `AuthenticationError` - Authentication failures (401, 403)
-- `NotFoundError` - Resource not found (404)
-- `RateLimitError` - Rate limit exceeded (429)
-- `ValidationError` - Invalid request data (400, invalid input parameters)
+All SDK errors inherit from `DermalyticsError`. A failed network request can have reached the server and consumed credits; check the balance before retrying a paid operation.
 
-## TypeScript Support
+## TypeScript
 
-This SDK is written in TypeScript and includes full type definitions. All types are exported for your convenience:
+Response and option types are exported from `dermalytics`. Method return types are inferred automatically.
 
-```typescript
-import type {
-  IngredientResponse,
-  IngredientDetailFields,
-  IngredientAnalysis,
-  AnalyzeRequest,
-  AnalyzeResponse,
-  ErrorResponse,
-  Severity,
-  TraitFlag,
-  DermalyticsConfig,
-} from 'dermalytics';
+```ts
+import type { ProductResponse, ProductSearchOptions } from 'dermalytics';
+
+const options: ProductSearchOptions = { limit: 5, ingredient: 'Niacinamide' };
+const page = await client.searchProducts('cream', options);
+
+if (page.data.length > 0) {
+  const product: ProductResponse = await client.getProduct(page.data[0].id);
+  console.log(product.ingredients);
+}
 ```
 
-## Development
+See [all exported types](src/types.ts) for ingredient responses, analysis, pagination and errors.
 
-### Setup
+## Develop
 
-1. Clone the repository:
-```bash
-git clone https://github.com/dermalytics-dev/dermalytics-js.git
-cd dermalytics-js
+```sh
+pnpm install --frozen-lockfile
+pnpm lint
+pnpm test
+pnpm build
 ```
 
-2. Install dependencies:
-```bash
-npm install
-```
+## Resources
 
-3. Build the project:
-```bash
-npm run build
-```
-
-### Running Tests
-
-```bash
-npm test
-```
-
-### Linting
-
-```bash
-npm run lint
-```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-The MIT License allows you to:
-- ✅ Use the code commercially
-- ✅ Modify the code
-- ✅ Distribute the code
-- ✅ Use privately
-- ✅ Include in proprietary software
-
-You must:
-- Include the original copyright notice
-- Include the license text
-
-## Links
-
-- [npm: `dermalytics`](https://www.npmjs.com/package/dermalytics)
-- [Dermalytics API Documentation](https://docs.dermalytics.dev)
-- [GitHub Repository](https://github.com/dermalytics-dev/dermalytics-js)
-- [Issue Tracker](https://github.com/dermalytics-dev/dermalytics-js/issues)
-
-## Support
-
-For support, email support@dermalytics.dev or open an issue on GitHub.
+- [API reference and examples](https://www.dermalytics.dev/docs)
+- [Account, API keys and credits](https://www.dermalytics.dev/dashboard)
+- [Report an SDK issue](https://github.com/dermalytics-dev/dermalytics-js/issues)
+- [MIT license](LICENSE)

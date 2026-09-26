@@ -63,6 +63,67 @@ export interface ErrorResponse {
 }
 
 export interface DermalyticsConfig {
-  apiKey: string;
+  apiKey?: string;
   baseUrl?: string;
+}
+
+export interface SearchOptions {
+  limit?: number;
+  offset?: number;
+}
+
+export interface ProductSearchOptions extends SearchOptions {
+  brand?: string;
+  ingredient?: string;
+}
+
+export interface SearchPagination {
+  limit: number;
+  offset: number;
+  next_offset: number | null;
+}
+
+export interface IngredientSearchItem {
+  id: string;
+  name: string;
+  cas_no: string | null;
+  ec_no: string | null;
+  functions: string[];
+  ratings_available: { comedogenicity: boolean; irritancy: boolean };
+  record_updated_at: string;
+}
+
+export interface ProductSummary {
+  id: string;
+  name: string;
+  brand: string | null;
+  category: string | null;
+  ingredients_count: number;
+  area: 'face' | 'eyes' | 'lips' | 'body' | 'hair' | 'nails' | null;
+  /** Stored derived tags, not independently verified product claims. */
+  traits_cache: string[];
+  key_ingredient_tags: string[];
+}
+
+export interface ProductIngredientItem {
+  id: string;
+  name: string;
+  position: number | null;
+}
+
+export interface IngredientSearchResponse {
+  data: IngredientSearchItem[];
+  pagination: SearchPagination;
+  credits_remaining: number;
+}
+
+export interface ProductSearchResponse {
+  data: ProductSummary[];
+  pagination: SearchPagination;
+  credits_remaining: number;
+}
+
+export interface ProductResponse extends ProductSummary {
+  ingredients: ProductIngredientItem[];
+  credits_remaining: number;
 }
